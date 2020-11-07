@@ -24,7 +24,6 @@ export const SvgOverdiv: React.FC = (props) => {
   };
 
   const onWheel = (event: React.WheelEvent<SVGSVGElement>) => {
-    event.preventDefault();
     event.stopPropagation();
     const multiplayer = 0.8;
     const newZoom = event.deltaY < 0 ? zoom / multiplayer : zoom * multiplayer;
