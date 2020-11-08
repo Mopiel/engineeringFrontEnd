@@ -6,17 +6,17 @@ export const useStyles = createUseStyles({
   rect: {
     fill: "transparent",
     strokeWidth: 3,
-    stroke: "black",
+    stroke: "#b5adac",
   },
   line: {
     strokeWidth: 3,
     fill: "transparent",
-    stroke: "black",
+    stroke: "#b5adac",
   },
   text: {
     textAnchor: "middle",
     fontSize: 20,
-    fontWeight: 700,
-    fill: "#a6a6a6",
+    fontWeight: 600,
+    fill: "#a19991",
   },
 });

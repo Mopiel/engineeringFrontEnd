@@ -3,7 +3,31 @@ import "./App.css";
 import { Room } from "./SVG/Room/Room";
 import { SvgOverdiv } from "./SVG/SvgOverdiv";
 import { useQuery, gql } from "@apollo/client";
-import { PannelLeft } from "./Pannels/PannelLeft";
+import { PannelLeft } from "./Pannels/LeftPannel/PannelLeft";
+import { Loader } from "./Loader/Loader";
+type ID = string | number;
+
+export interface Position {
+  id: ID;
+  device: string;
+  x: number;
+  y: number;
+}
+export interface Beacon {
+  id: ID;
+  name: String;
+  positions: Devices[];
+}
+export interface Devices {
+  id: ID;
+  x: number;
+  y: number;
+  device: string;
+  rssi: number[];
+  date: string;
+  txpower: number;
+  alarmcode: number;
+}
 
 const GET_MY_TODOS = gql`
   query {
@@ -16,6 +40,7 @@ const GET_MY_TODOS = gql`
         rssi
         date
         alarmcode
+        txpower
         x
         y
       }
@@ -31,6 +56,7 @@ const GET_MY_TODOS = gql`
 
 const App: React.FC = () => {
   const {
+    loading,
     error,
     data: { positions, beacons } = { positions: [], beacons: [] },
   } = useQuery(GET_MY_TODOS, {
@@ -41,9 +67,13 @@ const App: React.FC = () => {
     console.log(positions, beacons);
   }, [positions, beacons]);
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <>
-      <PannelLeft />
+      <PannelLeft beacons={beacons} />
       <SvgOverdiv>
         <Room />
       </SvgOverdiv>
