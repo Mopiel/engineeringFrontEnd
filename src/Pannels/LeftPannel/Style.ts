@@ -4,6 +4,7 @@ import { createUseStyles } from "react-jss";
 // most plugins are available without further configuration needed.
 export const useStyles = createUseStyles({
   pannelLeft: {
+    display: "inline-block",
     backgroundColor: "white",
     borderRight: "solid 2px #b5adac",
     height: "100vh",
@@ -27,7 +28,7 @@ export const useStyles = createUseStyles({
   body: {
     height: "calc(100% - 50px)",
     overflow: "auto",
-    padding: 10,
+    padding: 0,
   },
   mainTitle: {
     color: "#958c83",
@@ -37,15 +38,33 @@ export const useStyles = createUseStyles({
   },
   beaconDiv: {
     borderTop: "1px solid #b5adac",
-    padding: 5,
+    padding: 0,
   },
   row: {
     margin: "0px 0px 0px 15px",
     position: "relative",
   },
+  overDiv: {
+    position: "relative",
+    boxShadow: "0px 1px 2px #bfbfbf",
+    padding: "3px 25px",
+    cursor: "pointer",
+    transition: "0.1s",
+    "&:hover": {
+      backgroundColor: "#f2f2f2",
+      boxShadow: "0px 2px 5px #bfbfbf",
+      zIndex: 2,
+    },
+    "&:active": {
+      backgroundColor: "#f9f9f9",
+      boxShadow: "0px 1px 3px #bfbfbf",
+      zIndex: 2,
+    },
+  },
   beaconName: {
     fontWeight: 600,
     fontSize: 16,
+    padding: "5px 20px 5px 15px",
     position: "relative",
     display: "inline-block",
   },
@@ -65,6 +84,6 @@ export const useStyles = createUseStyles({
     margin: 4,
     extend: "left",
     position: "absolute",
-    right: 0,
+    right: 20,
   },
 });

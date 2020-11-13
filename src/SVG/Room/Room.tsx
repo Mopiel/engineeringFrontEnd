@@ -5,7 +5,7 @@ import { useStyles } from "./Style";
 export const Room: React.FC = () => {
   const classes = useStyles();
   return (
-    <g style={{ transform: "translate(-450px,-250px)" }}>
+    <g>
       <rect className={classes.rect} width="900" height="500" />
       <rect className={classes.rect} width="300" height="300" />
       <rect

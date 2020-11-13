@@ -56,7 +56,7 @@ export const SvgOverdiv: React.FC = (props) => {
           transform: `translate(${cords.x}px,${cords.y}px) scale(${zoom})`,
         }}
       >
-        {children}
+        <g style={{ transform: "translate(-450px,-250px)" }}>{children}</g>
       </g>
     </svg>
   );

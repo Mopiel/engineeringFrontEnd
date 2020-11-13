@@ -4,11 +4,14 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { GraphQl } from "./Graphql/Graphgl";
+import { BeaconeContextProvider } from "./context/BeaconeContext";
 
 ReactDOM.render(
   <React.StrictMode>
     <GraphQl>
-      <App />
+      <BeaconeContextProvider>
+        <App />
+      </BeaconeContextProvider>
     </GraphQl>
   </React.StrictMode>,
   document.getElementById("root")
