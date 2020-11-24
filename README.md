@@ -1,6 +1,6 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project includes frondend part of project to localizate people in buildings by beacon system.
 
 ## Available Scripts
 
