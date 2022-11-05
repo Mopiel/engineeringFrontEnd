@@ -8,11 +8,9 @@ import { BeaconeContextProvider } from "./context/BeaconeContext";
 
 ReactDOM.render(
   <React.StrictMode>
-    <GraphQl>
-      <BeaconeContextProvider>
-        <App />
-      </BeaconeContextProvider>
-    </GraphQl>
+    <BeaconeContextProvider>
+      <App />
+    </BeaconeContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

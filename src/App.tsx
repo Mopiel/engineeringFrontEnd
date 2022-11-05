@@ -2,17 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import "./App.css";
 import { Room } from "./SVG/Room/Room";
 import { SvgOverdiv } from "./SVG/SvgOverdiv";
-import { useQuery, gql } from "@apollo/client";
-import { PannelLeft } from "./Pannels/LeftPannel/PannelLeft";
-import { Loader } from "./Loader/Loader";
 import { Detector } from "./SVG/Detector/Detector";
 import { Beacon } from "./SVG/Beacon/Beacon";
-import { BeaconeContext } from "./context/BeaconeContext";
-import { Selected } from "./Selected";
-import { RightPannel } from "./Pannels/RightPannel/RightPannel";
-import { Alarms } from "./Pannels/RightPannel/Alarms";
-import { TrackingPannel } from "./Pannels/RightPannel/TrackingPannel";
-import { Track } from "./Track";
 
 type ID = string | number;
 
@@ -23,6 +14,64 @@ export const getColor = (device: string) => {
   if (device === "463") return "#c985e0";
   return "#cc6600";
 };
+
+const mapValues = ((value: number[]) => [850 - value[0] * 100, value[1] * 100])
+
+const PREDICTED = [
+  [6.7299733, 4.0320034],
+  [6.5177207, 4.5209284],
+  [6.6850085, 4.354196],
+  [6.3240952, 4.2109866],
+  [6.4669795, 2.6960826],
+  [5.092784, 4.7253714],
+  [2.0174108, 4.179389],
+  [4.4990883, 6.2895],
+  [2.9614732, 4.930053],
+  [1.4669795, 2.2895]
+].map(mapValues)
+
+const MESURED = [
+  [7.0, 6.0],
+  [6.0, 5.5],
+  [6.5, 4.0],
+  [7.0, 3.0],
+  [6.0, 2.5],
+  [4.5, 4.5],
+  [4.0, 5.5],
+  [3.0, 6.0],
+  [2.5, 4.5],
+  [1.5, 1.5]
+].map(mapValues)
+
+const PREDICT_WIFI = [
+  [6.5666847, 4.2955937],
+  [6.730729, 4.6750293],
+  [6.9138794, 4.266975],
+  [6.6572185, 4.4457655],
+  [6.3788357, 2.6709325],
+  [4.8156414, 5.004413],
+  [2.9992158, 5.7474427],
+  [3.3928318, 6.2645054],
+  [2.8465064, 4.6240106],
+  [1.4669795, 2.2895]
+].map(mapValues)
+
+const COLORS = [
+  "red",
+  "green",
+  "blue",
+  "yellow",
+]
+
+const DETECTORS = [
+  [1.25, 0],
+  [5, 4],
+  [2.5, 6],
+  [7, 1],
+  [7, 6.5],
+  [8.5, 4],
+  [5, 6.5],
+].map(mapValues)
 
 export interface Position {
   id: ID;
@@ -63,114 +112,60 @@ export const calculateDistance = (rssi: number[], txpower: number) => {
   return Math.pow(10, (newRssi - txpower) / (-10 * 2.5));
 };
 
-const GET_MY_TODOS = gql`
-  query {
-    beacons {
-      id
-      name
-      positions {
-        id
-        device
-        rssi
-        date
-        alarmcode
-        txpower
-        x
-        y
-      }
-    }
-    positions {
-      id
-      device
-      x
-      y
-    }
-    errors {
-      id
-      code
-      message
-    }
-  }
-`;
 
 const App: React.FC = () => {
-  const {
-    loading,
-    error,
-    data: { positions: _positions, beacons: _beacons, errors: _errors } = {
-      positions: [],
-      beacons: [],
-      errors: [],
-    },
-  } = useQuery(GET_MY_TODOS, {
-    pollInterval: 1000,
-  });
-
-  const { selectedPosition, displayedBeacons } = useContext(BeaconeContext)!;
-  const [beacons, setBeacons] = useState<Beacon[]>(_beacons);
-  const [positions, setPositions] = useState<Position[]>(_positions);
-  const [errors, setErrors] = useState<Error[]>(_positions);
-
-  useEffect(() => {
-    setBeacons(_beacons);
-    setPositions(_positions);
-    setErrors(_errors);
-  }, [_positions, _beacons, _errors]);
-
-  if (loading || beacons[0] === undefined) {
-    return <Loader />;
-  }
 
   return (
     <>
-      <PannelLeft beacons={beacons} />
-      <div style={{ position: "absolute", top: 0, right: 0, zIndex: 2 }}>
-        <RightPannel beacons={beacons} />
-        <Alarms beacons={beacons} alarms={errors} />
-        <TrackingPannel beacons={beacons} />
-      </div>
       <SvgOverdiv>
         <Room />
-        {selectedPosition && <Selected beacons={beacons} />}
-        {!selectedPosition &&
-          beacons
-            .filter((b) =>
-              displayedBeacons.find((beacon) => b.name === beacon.name)
-            )
-            .map((beacon: Beacon) => {
-              const array = beacon.positions
-                .filter((p) => checkDate(Number(p.date)))
-                .map(
-                  (p) =>
-                    p.rssi.slice(-previousAnalize).reduce((p, c) => p + c) /
-                    previousAnalize
-                );
-              const index = array.indexOf(Math.max(...array));
-              const position = beacon.positions[index];
-
+        <>
+          {MESURED
+            .map((measured, index) => {
+              const predicted = PREDICT_WIFI[index]
               return (
                 <>
-                  {beacon.positions
-                    .filter((p) => checkDate(Number(p.date)))
-                    .map((p) => {
-                      const size = calculateDistance(p.rssi, p.txpower);
-                      return (
-                        <Beacon
-                          color={getColor(beacon.name)}
-                          name={beacon.name}
-                          size={size}
-                          x={p.x}
-                          y={p.y}
-                        />
-                      );
-                    })}
+                  <Beacon
+                    color={"green"}
+                    name={"from"}
+                    size={0.1}
+                    x={measured[0]}
+                    y={measured[1]}
+                  />
+
+                  {predicted && <>
+                    <Beacon
+                      color={"red"}
+                      name={"to"}
+                      size={0.1}
+                      x={predicted[0]}
+                      y={predicted[1]}
+                    />
+                    <line
+                      x1={measured[0]}
+                      y1={measured[1]}
+                      x2={predicted[0]}
+                      y2={predicted[1]}
+                      style={{
+                        strokeWidth: 3,
+                        fill: "transparent",
+                        stroke: COLORS[index % COLORS.length],
+                      }}
+                    />
+                  </>}
                 </>
               );
             })}
-        <Track beacons={beacons}  />
-        {positions.map((device: Position) => (
-          <Detector x={device.x} y={device.y} name={device.device} />
-        ))}
+        </>
+        {DETECTORS.map((detector, index) => {
+          return (
+            <Detector
+              x={detector[0]}
+              y={detector[1]}
+              name={(index < 6 ? ("BLE " + (index + 1).toString()) : "WIFI")}
+            />
+          )
+        })}
       </SvgOverdiv>
     </>
   );
